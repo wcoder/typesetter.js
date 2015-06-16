@@ -72,11 +72,12 @@ HashMap.prototype = {
 <script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
 <script src="../src/typesetter.js"></script>
 <script>
-	$(function(){
+	document.addEventListener('DOMContentLoaded', function(){
 
-		var data = $("#test_data").html();
+		var data = document.querySelector('#test_data').textContent;
+		var element = document.querySelector('#typesetter');
 
-		$('#typesetter').typesetter({
+		typesetter(element, {
 			data: data
 		});
 

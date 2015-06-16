@@ -1,4 +1,4 @@
-(function ($, w) {
+(function (w) {
 	'use strict';
 	
 	var KEY_SPACE = 32,
@@ -9,37 +9,27 @@
 
 		App = {
 			targetElement: null,
-			settings: {
-				data: ''
-			},
+			settings: {},
 			expectations: [],
 			currentPosition: 0,
-
-			init: function () {},
-			pharseToHtml: function () {},
-			loadFile: function () {},
-			attachEventListeners: function () {},
-			getSymbolByIndex: function () {}
 		};
 
-	$.fn.typesetter = function (options) {
-		App.targetElement = $(this);
-		App.settings = $.extend(App.settings, options);
+	w.typesetter = function (element, options) {
+		App.targetElement = element;
+		App.settings = options;
 
-		App.init();
+		init();
 	};
 
-	App.init = function () {
-		// load file
-		App.targetElement.html(App.pharseToHtml(App.settings.data));
-		// set cursor
-		App.getSymbolByIndex(App.currentPosition).addClass('cursor');
+	function init() {
+		App.targetElement.innerHTML = pharseToHtml(App.settings.data);
 
-		App.attachEventListeners();
-	};
+		setClassToSymbol(App.currentPosition, 'cursor');
 
-	
-	App.pharseToHtml = function (text) {
+		attachEventListeners();
+	}
+
+	function pharseToHtml(text) {
 		var i = 0,
 			html = '',
 			symbol = '';
@@ -63,42 +53,24 @@
 		}
 
 		return html;
-	};
+	}
 
-	App.attachEventListeners = function () {
-		
-		/*var errorCounter = 0;
-		var errorPosition = 0;*/
+	function attachEventListeners() {
 
-		$(window).keydown(function (event) {
+		w.addEventListener('keydown', function (event) {
 			var keyCode = event.keyCode || event.which;
 			if (keyCode === KEY_TAB || keyCode === KEY_BACKSPACE) {
 				event.preventDefault();
-				//console.log('Tab! ');
 			}
-			/*if (keyCode === KEY_BACKSPACE) {
-				App.getSymbolByIndex(App.currentPosition)
-					.removeClass('cursor')
-					.addClass('');
-				if (App.currentPosition > 0) App.currentPosition--;
-				App.getSymbolByIndex(App.currentPosition)
-					.removeClass('cursor-exeption')
-					.addClass('cursor');
-				
-				if (errorCounter > 0 && errorCounter < 4) errorCounter--;
-			}*/
 		});
 	
-		$(window).keypress(function (event) {
+		w.addEventListener('keypress', function (event) {
 			event.preventDefault();
 
 			var keyCode = event.keyCode || event.which;
 
-			if (App.expectations[App.currentPosition] === keyCode /*&& errorCounter === 0*/) {
-				App.getSymbolByIndex(App.currentPosition)
-					.removeClass('cursor')
-					.removeClass('cursor-exeption')
-					.addClass('done-symbol');
+			if (App.expectations[App.currentPosition] === keyCode) {
+				setClassToSymbol(App.currentPosition, 'done-symbol');
 
 				if (keyCode === KEY_ENTER) {
 					while (App.expectations[App.currentPosition + 1] === KEY_SPACE) {
@@ -106,30 +78,28 @@
 					}
 				}
 				App.currentPosition++;
-				App.getSymbolByIndex(App.currentPosition).addClass('cursor');
+
+				setClassToSymbol(App.currentPosition, 'cursor');
 			} else {
-				/*if (errorPosition == 0) errorPosition = App.currentPosition;
-				if (errorCounter < 4) {
-					errorCounter++;*/
-					App.getSymbolByIndex(App.currentPosition)
-						.removeClass('cursor')
-						.addClass('cursor-exeption');
-					/*App.currentPosition++;
-				}*/
+				setClassToSymbol(App.currentPosition, 'cursor-exeption');
 			}
-	
 
 		});
+	}
 
-	};
+	function setClassToSymbol(symbolIndex, className) {
+		var symbol = getSymbolByIndex(symbolIndex);
+		var oldClass = symbol.className;
 
+		if (oldClass.indexOf('break-line') > -1 && className.indexOf('cursor') > -1) {
+			symbol.className = oldClass + ' ' + className;
+		} else {
+			symbol.className = className;
+		}
+	}
 
-	/**
-	 @param int index
-	 @return jQuery object
-	*/
-	App.getSymbolByIndex = function (index) {
-		return $(App.targetElement.find('span')[index]);
-	};
+	function getSymbolByIndex(index) {
+		return App.targetElement.querySelectorAll('span')[index];
+	}
 
-}(window.jQuery, window));
+}(window));
