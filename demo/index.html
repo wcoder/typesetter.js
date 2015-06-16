@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
+	<link href='http://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700,400italic,700italic&subset=latin,cyrillic-ext,cyrillic,latin-ext' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" type="text/css" href="../src/typesetter.css">
+</head>
+<body>
+	<pre id="qwe" style="display: none;">
+'
+	s
+		s
+
+// функция
+function hashKey(obj) {
+  var objType = typeof obj,
+      key;
+
+  if (objType == 'object' && obj !== null) {
+    if (typeof (key = obj.$$hashKey) == 'function') {
+      // must invoke on object to keep the right this
+      key = obj.$$hashKey();
+    } else if (key === undefined) {
+      key = obj.$$hashKey = nextUid();
+    }
+  } else {
+    key = obj;
+  }
+
+  return objType + ':' + key;
+}
+
+function HashMap(array){
+  forEach(array, this.put, this);
+}
+HashMap.prototype = {
+  /**
+   * Store key value pair
+   * @param key key to store can be any type
+   * @param value value to store can be any type
+   */
+  put: function(key, value) {
+    this[hashKey(key)] = value;
+  },
+
+  /**
+   * @param key
+   * @returns {Object} the value for the key
+   */
+  get: function(key) {
+    return this[hashKey(key)];
+  },
+
+  /**
+   * Remove the key/value pair
+   * @param key
+   */
+  remove: function(key) {
+    var value = this[key = hashKey(key)];
+    delete this[key];
+    return value;
+  }
+};
+	</pre>
+
+	<pre id="typer"></div>
+	
+</body>
+
+<script src="../src/typesetter.js"></script>
+<script>
+	$('#typer').typer({
+		'file': $("#qwe").html(),
+		id: 1
+	});
+</script>
+
+</html>

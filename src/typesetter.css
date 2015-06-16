@@ -1,0 +1,25 @@
+.cursor {
+	outline: 1px solid #47d42b;
+	background: #47d42b;
+	color: #fff;
+}
+.cursor-exeption {
+	outline: 1px solid #e63d3d;
+	background: #e63d3d;
+	color: #fff;
+}
+
+.done-symbol {
+	color: #333;
+}
+.cursor.break-line:before,
+.cursor-exeption.break-line:before {
+	content: "\23CE";
+	font-size: 12px;
+}
+
+#typer {
+
+	font-family: "Ubuntu Mono" !important;
+	color: #999;
+}
