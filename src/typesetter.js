@@ -1,16 +1,6 @@
 (function ($, w) {
 	'use strict';
 	
-	
-	// TODO:
-	// - модульность
-	// - удаление
-	// - возможность продолжение набора при ошибке
-	// - статистика - через модуль
-	// - отказ от jQuery
-	// - кросс-браузерность
-	// - залить на github
-
 	var KEY_SPACE = 32,
 		KEY_ENTER = 13,
 		KEY_TAB = 9,
@@ -20,8 +10,7 @@
 		App = {
 			targetElement: null,
 			settings: {
-				file: '',
-				id: 1
+				data: ''
 			},
 			expectations: [],
 			currentPosition: 0,
@@ -33,7 +22,7 @@
 			getSymbolByIndex: function () {}
 		};
 
-	$.fn.typer = function (options) {
+	$.fn.typesetter = function (options) {
 		App.targetElement = $(this);
 		App.settings = $.extend(App.settings, options);
 
@@ -42,7 +31,7 @@
 
 	App.init = function () {
 		// load file
-		App.targetElement.html(App.pharseToHtml(App.settings.file));
+		App.targetElement.html(App.pharseToHtml(App.settings.data));
 		// set cursor
 		App.getSymbolByIndex(App.currentPosition).addClass('cursor');
 
