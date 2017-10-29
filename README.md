@@ -4,4 +4,4 @@ Simple and extensible typesetter with Javascript
 [Demo](https://wcoder.github.io/typesetter.js/index.html)
 
 ---
-&copy; Yauheni Pakala 2015 | Apache License 2.0
+&copy; 2015 Yauheni Pakala | Apache License 2.0
