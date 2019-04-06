@@ -1,19 +1,22 @@
-.cursor {
+.cursor-current {
 	outline: 1px solid #47d42b;
 	background: #47d42b;
 	color: #fff;
 }
-.cursor-exeption {
+.cursor-exception {
 	outline: 1px solid #e63d3d;
 	background: #e63d3d;
 	color: #fff;
 }
-
-.done-symbol {
+.cursor-error {
+	outline: 1px solid #e63d3d;
+}
+.cursor-done {
 	color: #333;
 }
-.cursor.break-line:before,
-.cursor-exeption.break-line:before {
+.cursor-current.break-line:before,
+.cursor-error.break-line:before,
+.cursor-exception.break-line:before {
 	content: "\23CE";
 	font-size: 12px;
 }
@@ -22,3 +25,6 @@
 	font-family: "Ubuntu Mono" !important;
 	color: #999;
 }
+/* span {
+	border: 0.5px solid red;
+} */

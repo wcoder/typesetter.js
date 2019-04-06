@@ -6,30 +6,38 @@
         KEY_TAB = 9,
         KEY_BACKSPACE = 8,
         KEY_LINEBREAK = 10,
+        BREAK_LINE = 'break-line',
+        CURSOR_CURRENT = 'cursor-current',
+        CURSOR_DONE = 'cursor-done',
+        CURSOR_ERROR = 'cursor-error',
+        CURSOR_EXCEPTION = 'cursor-exception',
 
         App = {
             targetElement: null,
             settings: {},
             expectations: [],
             currentPosition: 0,
+            firstErrorPosition: -1,
         };
 
     w.typesetter = function (element, options) {
         App.targetElement = element;
+
+        // TODO: check options, set default
         App.settings = options;
 
         init();
     };
 
     function init() {
-        App.targetElement.innerHTML = pharseToHtml(App.settings.data);
+        App.targetElement.innerHTML = parseToHtml(App.settings.data);
 
-        setClassToSymbol(App.currentPosition, 'cursor');
+        markCursor(CURSOR_CURRENT);
 
         attachEventListeners();
     }
 
-    function pharseToHtml(text) {
+    function parseToHtml(text) {
         var i = 0,
             html = '',
             symbol = '';
@@ -56,46 +64,107 @@
     }
 
     function attachEventListeners() {
+        w.addEventListener('keydown', keyDownHandler);
+        w.addEventListener('keypress', keyPressHandler);
+    }
 
-        w.addEventListener('keydown', function (event) {
-            var keyCode = event.keyCode || event.which;
-            if (keyCode === KEY_TAB || keyCode === KEY_BACKSPACE) {
-                event.preventDefault();
-            }
-        });
+    function keyDownHandler(event) {
+        var keyCode = event.keyCode || event.which;
 
-        w.addEventListener('keypress', function (event) {
+        if (keyCode === KEY_TAB) {
             event.preventDefault();
+            // ignored
+        }
 
-            var keyCode = event.keyCode || event.which;
+        if (keyCode === KEY_BACKSPACE) {
+            event.preventDefault();
+            previousPosition();
+        }
+    }
 
-            if (App.expectations[App.currentPosition] === keyCode) {
-                setClassToSymbol(App.currentPosition, 'done-symbol');
+    function keyPressHandler(event) {
+        event.preventDefault();
 
-                if (keyCode === KEY_ENTER) {
-                    while (App.expectations[App.currentPosition + 1] === KEY_SPACE) {
-                        App.currentPosition++;
-                    }
-                }
-                App.currentPosition++;
+        var keyCode = event.keyCode || event.which;
 
-                setClassToSymbol(App.currentPosition, 'cursor');
-            } else {
-                setClassToSymbol(App.currentPosition, 'cursor-exeption');
-            }
+        if (App.expectations[App.currentPosition] === keyCode &&
+            App.firstErrorPosition < 0) {
+            typedCorrect(keyCode);
+        } else {
+            typedError(keyCode);
+        }
+    }
 
-        });
+    function previousPosition() {
+        if (App.currentPosition == 0) {
+            return;
+        }
+        clearCursor();
+
+        App.currentPosition--;
+
+        // TODO: refactor
+        if (App.firstErrorPosition < 0) {
+            markCursor(CURSOR_CURRENT);
+        } else if (App.currentPosition > App.firstErrorPosition) {
+            markCursor(CURSOR_ERROR);
+        } else {
+            markCursor(CURSOR_CURRENT);
+            App.firstErrorPosition = -1;
+        }
+    }
+
+    function typedCorrect(keyCode) {
+        markCursor(CURSOR_DONE);
+
+        // TODO: feature for auto cursor shift (with ignore whitespace)
+        // if (keyCode === KEY_ENTER) {
+        //     while (App.expectations[App.currentPosition + 1] === KEY_SPACE) {
+        //         nextPosition();
+        //     }
+        // }
+        nextPosition();
+
+        markCursor(CURSOR_CURRENT);
+    }
+
+    function typedError(keyCode) {
+        markCursor(CURSOR_EXCEPTION);
+
+        // save start error position
+        if (App.firstErrorPosition < 0) {
+            App.firstErrorPosition = App.currentPosition;
+        }
+
+        nextPosition();
+
+        markCursor(CURSOR_ERROR);
+    }
+
+    function nextPosition()
+    {
+        App.currentPosition++;
+        console.log(App.currentPosition);
+    }
+
+    function clearCursor() {
+        markCursor('');
+    }
+
+    function markCursor(className) {
+        setClassToSymbol(App.currentPosition, className);
     }
 
     function setClassToSymbol(symbolIndex, className) {
         var symbol = getSymbolByIndex(symbolIndex);
         var oldClass = symbol.className;
 
-        if (oldClass.indexOf('break-line') > -1 && className.indexOf('cursor') > -1) {
-            symbol.className = oldClass + ' ' + className;
-        } else {
-            symbol.className = className;
+        if (oldClass.indexOf(BREAK_LINE) > -1) {
+            symbol.className = BREAK_LINE + ' ' + className;
+            return;
         }
+
+        symbol.className = className;
     }
 
     function getSymbolByIndex(index) {
