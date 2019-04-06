@@ -53,14 +53,14 @@
                 App.expectations.push(KEY_ENTER);
                 break;
             case KEY_TAB:
-                // TODO: refactor
-                var span = App.settings.cursorAutoShift
-                    ? "<span class='skip'> </span>"
-                    : "<span> </span>";
-                html += span + span + span + span;
-
-                var key = App.settings.cursorAutoShift ? KEY_SKIP : KEY_SPACE;
-                App.expectations.push(key, key, key, key);
+                if (App.settings.cursorAutoShift) {
+                    html += "<span class='skip'>    </span>";
+                    App.expectations.push(KEY_SKIP);
+                } else {
+                    var span = "<span> </span>";
+                    html += span + span + span + span;
+                    App.expectations.push(KEY_SPACE, KEY_SPACE, KEY_SPACE, KEY_SPACE);
+                }
                 break;
             default:
                 html += "<span>" + text[i] + "</span>";
