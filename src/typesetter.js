@@ -5,7 +5,6 @@
         KEY_ENTER = 13,
         KEY_TAB = 9,
         KEY_BACKSPACE = 8,
-        KEY_LINEBREAK = 10,
         KEY_SKIP = -32,
         BREAK_LINE = 'break-line',
         CURSOR_CURRENT = 'cursor-current',
@@ -41,6 +40,40 @@
     }
 
     function parseToHtml(text) {
+        var i = 0, html = '';
+        var lines = text.split("\n");
+
+        for (i = 0; i < lines.length; i++) {
+            html += parseLineToHtml(lines[i]);
+        }
+
+        return html;
+    }
+
+    // TODO: need hard refactor
+    function parseLineToHtml(line) {
+        var html = '';
+
+        // skip comments and empty lines
+        if (App.settings.cursorAutoShift &&
+            (App.settings.skipComments && hasComment(line) ||
+            App.settings.skipEmptyLines && line.trim().length == 0)) {
+
+            html += "<span class='skip comment'>" + line +"</span>";
+            // FIXME: skip break-like
+            html += '<span class="break-line"><br></span>';
+            App.expectations.push(KEY_SKIP, KEY_SKIP);
+        } else {
+            html += prepareLineToHtml(line);
+
+            html += '<span class="break-line"><br></span>';
+            App.expectations.push(KEY_ENTER);
+        }
+
+        return html;
+    }
+
+    function prepareLineToHtml(text) {
         var i = 0,
             html = '',
             symbol = '';
@@ -48,10 +81,6 @@
         for (i = 0; i < text.length; i++) {
             symbol = text[i].charCodeAt(0);
             switch (symbol) {
-            case KEY_LINEBREAK:
-                html += '<span class="break-line"><br></span>';
-                App.expectations.push(KEY_ENTER);
-                break;
             case KEY_TAB:
                 if (App.settings.cursorAutoShift) {
                     html += "<span class='skip'>    </span>";
@@ -198,6 +227,13 @@
         return App.firstErrorPosition != -1 &&
             App.settings.maxErrorsCount > 0 &&
             App.settings.maxErrorsCount <= App.currentPosition - App.firstErrorPosition;
+    }
+
+    function hasComment(line) {
+        // TODO: need to configure type of supported comments
+        return /^(\s+)?\/\//.test(line) ||
+               /^(\s+)?\/\*/.test(line) ||
+               /^(\s+)?\*/.test(line)
     }
 
 }(window));

@@ -14,6 +14,8 @@ Simple and extensible typesetter.
 - `string data`: text content for display
 - `int maxErrorsCount`: limit errors (disable: 0)
 - `bool cursorAutoShift`: skip whitespaces
+- `bool skipComments`: skip comments for `cursorAutoShift`
+- `bool skipEmptyLines`: skip empty lines for `cursorAutoShift`
 
 Developed just for fun. Inspired by the idea of https://typing.io/
 

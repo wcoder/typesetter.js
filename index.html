@@ -15,6 +15,9 @@
 
 // function
 function hashKey(obj) {
+	/*
+	 * test comment
+	 */
 	var objType = typeof obj,
 			key;
 
@@ -81,6 +84,8 @@ HashMap.prototype = {
 			data: data,
 			maxErrorsCount: 5, // 0 - without limit
 			cursorAutoShift: true,   // ignore whitespace
+			skipComments: true, // additional setup for cursorAutoShift
+			skipEmptyLines: true, // additional setup for cursorAutoShift
 		});
 
 	});
