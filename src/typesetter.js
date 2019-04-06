@@ -6,11 +6,14 @@
         KEY_TAB = 9,
         KEY_BACKSPACE = 8,
         KEY_LINEBREAK = 10,
+        KEY_SKIP = -32,
         BREAK_LINE = 'break-line',
         CURSOR_CURRENT = 'cursor-current',
         CURSOR_DONE = 'cursor-done',
         CURSOR_ERROR = 'cursor-error',
         CURSOR_EXCEPTION = 'cursor-exception',
+        DIRECTION_FORWARD = 1,
+        DIRECTION_BACKWARD = -1,
 
         App = {
             targetElement: null,
@@ -50,8 +53,14 @@
                 App.expectations.push(KEY_ENTER);
                 break;
             case KEY_TAB:
-                html += "<span> </span><span> </span><span> </span><span> </span>";
-                App.expectations.push(KEY_SPACE, KEY_SPACE, KEY_SPACE, KEY_SPACE);
+                // TODO: refactor
+                var span = App.settings.cursorAutoShift
+                    ? "<span class='skip'> </span>"
+                    : "<span> </span>";
+                html += span + span + span + span;
+
+                var key = App.settings.cursorAutoShift ? KEY_SKIP : KEY_SPACE;
+                App.expectations.push(key, key, key, key);
                 break;
             default:
                 html += "<span>" + text[i] + "</span>";
@@ -95,11 +104,40 @@
         }
     }
 
+    function typedCorrect(keyCode) {
+        markCursor(CURSOR_DONE);
+
+        nextPosition(keyCode);
+
+        markCursor(CURSOR_CURRENT);
+    }
+
+    function typedError(keyCode) {
+        if (checkMaxErrorsCount()) {
+            return;
+        }
+
+        markCursor(CURSOR_EXCEPTION);
+
+        // keep position of first error
+        if (App.firstErrorPosition < 0) {
+            App.firstErrorPosition = App.currentPosition;
+        }
+
+        nextPosition(keyCode);
+
+        markCursor(CURSOR_ERROR);
+    }
+
     function previousPosition() {
         if (App.currentPosition == 0) {
             return;
         }
         clearCursor();
+
+        if (App.settings.cursorAutoShift) {
+            cursorAutoShift(DIRECTION_BACKWARD);
+        }
 
         App.currentPosition--;
 
@@ -114,45 +152,12 @@
         }
     }
 
-    function typedCorrect(keyCode) {
-        markCursor(CURSOR_DONE);
-
-        // TODO: feature for auto cursor shift (with ignore whitespace)
-        // if (keyCode === KEY_ENTER) {
-        //     while (App.expectations[App.currentPosition + 1] === KEY_SPACE) {
-        //         nextPosition();
-        //     }
-        // }
-        nextPosition();
-
-        markCursor(CURSOR_CURRENT);
-    }
-
-    function typedError(keyCode) {
-        if (checkMaxErrorsCount()) {
-            return;
+    function nextPosition(keyCode) {
+        if (App.settings.cursorAutoShift &&
+            (keyCode === KEY_ENTER || App.firstErrorPosition != -1)) {
+            cursorAutoShift(DIRECTION_FORWARD);
         }
 
-        markCursor(CURSOR_EXCEPTION);
-
-        // save start error position
-        if (App.firstErrorPosition < 0) {
-            App.firstErrorPosition = App.currentPosition;
-        }
-
-        nextPosition();
-
-        markCursor(CURSOR_ERROR);
-    }
-
-    function checkMaxErrorsCount() {
-        return App.firstErrorPosition != -1 &&
-            App.settings.maxErrorsCount > 0 &&
-            App.settings.maxErrorsCount <= App.currentPosition - App.firstErrorPosition;
-    }
-
-    function nextPosition()
-    {
         App.currentPosition++;
     }
 
@@ -178,6 +183,21 @@
 
     function getSymbolByIndex(index) {
         return App.targetElement.querySelectorAll('span')[index];
+    }
+
+    // for features:
+
+    function cursorAutoShift(direction) {
+        while (App.expectations[App.currentPosition + direction] === KEY_SKIP) {
+            App.currentPosition += direction;
+        }
+    }
+
+    function checkMaxErrorsCount() {
+        // TODO: issue: calculation maxErrorsCount when cursorcursorAutoShift
+        return App.firstErrorPosition != -1 &&
+            App.settings.maxErrorsCount > 0 &&
+            App.settings.maxErrorsCount <= App.currentPosition - App.firstErrorPosition;
     }
 
 }(window));

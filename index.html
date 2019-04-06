@@ -79,7 +79,8 @@ HashMap.prototype = {
 
 		typesetter(element, {
 			data: data,
-			maxErrorsCount: 5 // 0 - without limit
+			maxErrorsCount: 5, // 0 - without limit
+			cursorAutoShift: true,   // ignore whitespace
 		});
 
 	});

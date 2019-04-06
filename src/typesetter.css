@@ -14,11 +14,10 @@
 .cursor-done {
 	color: #333;
 }
-.cursor-current.break-line:before,
-.cursor-error.break-line:before,
-.cursor-exception.break-line:before {
+.break-line:before {
 	content: "\23CE";
 	font-size: 12px;
+	color: #fff;
 }
 
 #typesetter {
