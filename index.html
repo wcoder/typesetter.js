@@ -66,7 +66,7 @@ HashMap.prototype = {
 	</pre>
 
 	<pre id="typesetter"></div>
-	
+
 </body>
 
 <script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
@@ -78,7 +78,8 @@ HashMap.prototype = {
 		var element = document.querySelector('#typesetter');
 
 		typesetter(element, {
-			data: data
+			data: data,
+			maxErrorsCount: 5 // 0 - without limit
 		});
 
 	});

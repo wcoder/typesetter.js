@@ -129,6 +129,10 @@
     }
 
     function typedError(keyCode) {
+        if (checkMaxErrorsCount()) {
+            return;
+        }
+
         markCursor(CURSOR_EXCEPTION);
 
         // save start error position
@@ -141,10 +145,15 @@
         markCursor(CURSOR_ERROR);
     }
 
+    function checkMaxErrorsCount() {
+        return App.firstErrorPosition != -1 &&
+            App.settings.maxErrorsCount > 0 &&
+            App.settings.maxErrorsCount <= App.currentPosition - App.firstErrorPosition;
+    }
+
     function nextPosition()
     {
         App.currentPosition++;
-        console.log(App.currentPosition);
     }
 
     function clearCursor() {
