@@ -60,7 +60,7 @@
             App.settings.skipEmptyLines && line.trim().length == 0)) {
 
             html += "<span class='skip comment'>" + line +"</span>";
-            // FIXME: skip break-like
+            // TODO: need a better approach for skip break-lines
             html += '<span class="break-line"><br></span>';
             App.expectations.push(KEY_SKIP, KEY_SKIP);
         } else {
@@ -69,7 +69,7 @@
             html += '<span class="break-line"><br></span>';
             App.expectations.push(KEY_ENTER);
         }
-
+        // TODO: return expectations too
         return html;
     }
 
@@ -223,7 +223,7 @@
     }
 
     function checkMaxErrorsCount() {
-        // TODO: issue: calculation maxErrorsCount when cursorcursorAutoShift
+        // TODO: issue: calculation maxErrorsCount when cursorAutoShift
         return App.firstErrorPosition != -1 &&
             App.settings.maxErrorsCount > 0 &&
             App.settings.maxErrorsCount <= App.currentPosition - App.firstErrorPosition;
@@ -231,9 +231,9 @@
 
     function hasComment(line) {
         // TODO: need to configure type of supported comments
-        return /^(\s+)?\/\//.test(line) ||
-               /^(\s+)?\/\*/.test(line) ||
-               /^(\s+)?\*/.test(line)
+        return /^(\s+)?\/\//.test(line) || // - //
+               /^(\s+)?\/\*/.test(line) || // - /*
+               /^(\s+)?\*/.test(line)      // - *
     }
 
 }(window));
