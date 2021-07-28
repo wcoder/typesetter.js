@@ -3,6 +3,12 @@ Simple and extensible typesetter.
 
 [Demo](https://wcoder.github.io/typesetter.js/index.html)
 
+## Install
+
+```
+npm i typesetter.js
+```
+
 ## Features
 
 - Realistic Key Processing Engine
