@@ -17,11 +17,23 @@ npm i typesetter.js
 
 ### Options:
 
-- `string data`: text content for display
-- `int maxErrorsCount`: limit errors (disable: 0)
-- `bool cursorAutoShift`: skip whitespaces
-- `bool skipComments`: skip comments for `cursorAutoShift`
-- `bool skipEmptyLines`: skip empty lines for `cursorAutoShift`
+Name | Type | Description
+-----|------|-------------
+data | string | text content for display
+maxErrorsCount | int | limit errors (disable: 0)
+cursorAutoShift | bool | skip whitespaces
+skipComments | bool | skip comments for `cursorAutoShift`
+skipEmptyLines | bool | skip empty lines for `cursorAutoShift`
+
+#### Example
+```js
+typesetter(element, {
+    data: "function hashKey(obj) { return 1; }",
+    maxErrorsCount: 5,
+    cursorAutoShift: true,   // ignore whitespace
+    skipComments: true,      // additional setup for cursorAutoShift
+});
+```
 
 Developed just for fun. Inspired by the idea of https://typing.io/
 
