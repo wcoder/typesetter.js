@@ -13,7 +13,7 @@ npm i typesetter.js
 
 - Realistic Key Processing Engine
 - Self-contained: Requires zero dependencies to work
-- todo
+- Detecting typos
 
 ### Options:
 
